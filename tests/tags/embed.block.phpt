@@ -335,6 +335,46 @@ testTemplate(
 		XX,
 );
 
+testTemplate(
+	'embed in parallel',
+	[
+		'main' => <<<'XX'
+
+					{embed embed1}
+						{block a}embed1-A{/block}
+					{/embed}
+
+					{embed embed2}
+						{block a}embed2-A{/block}
+					{/embed}
+
+					{define embed1}
+					embed1-start
+						{block a}embed1{/block}
+					embed1-end
+					{/define}
+
+					{define embed2}
+					embed2-start
+						{block a}embed2{/block}
+					embed2-end
+					{/define}
+
+			XX,
+	],
+	<<<'XX'
+
+
+				embed1-start
+					embed1-A
+				embed1-end
+				embed2-start
+					embed2-A
+				embed2-end
+
+		XX,
+);
+
 
 testTemplate(
 	'nested embedding with different overwritten blocks',
