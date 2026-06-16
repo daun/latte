@@ -36,6 +36,9 @@ class IncludeBlockNode extends StatementNode
 	/** @var Block[][] */
 	public array $blocks;
 
+	/** @var array<int, int|string> */
+	public array $defineLayerParent = [];
+
 
 	public static function create(Tag $tag, TemplateParser $parser): static
 	{
@@ -77,6 +80,7 @@ class IncludeBlockNode extends StatementNode
 		$node->modifier->escape = !$node->modifier->removeFilter('noescape') && !$node->parent;
 		$node->blocks = &$parser->blocks;
 		$node->layer = $parser->blockLayer;
+		$node->defineLayerParent = $parser->defineLayerParent;
 		return $node;
 	}
 
@@ -100,7 +104,15 @@ class IncludeBlockNode extends StatementNode
 	{
 		if ($this->name instanceof Scalar\StringNode || $this->name instanceof Scalar\IntegerNode) {
 			$staticName = (string) $this->name->value;
-			$block = ($this->layer !== null ? $this->blocks[$this->layer][$staticName] ?? null : null) ?? $this->blocks[Template::LayerLocal][$staticName] ?? null;
+			$layer = $this->layer;
+			$block = null;
+			while ($layer !== null) {
+				if ($block = $this->blocks[$layer][$staticName] ?? null) {
+					break;
+				}
+				$layer = $this->defineLayerParent[$layer] ?? null;
+			}
+			$block ??= $this->blocks[Template::LayerLocal][$staticName] ?? null;
 		}
 
 		return $context->format(

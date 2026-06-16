@@ -26,6 +26,7 @@ final class TemplateParser
 	/** @var Block[][] */
 	public array $blocks = [[]];
 	public int $blockLayer = Template::LayerTop;
+	public array $defineLayerParent = [];
 	public bool $inHead = true;
 	public bool $strict = false;
 	public bool $dedent = false;

@@ -358,6 +358,23 @@ class Template
 	}
 
 
+	protected function enterDefineLayer(int $staticId): void
+	{
+		$this->blockStack[] = $this->blocks[self::LayerTop];
+		$this->blocks[self::LayerTop] = [];
+		$this->copyBlockLayer();
+		foreach (static::Blocks[$staticId] ?? [] as $nm => $info) {
+			[$method, $contentType] = is_array($info) ? $info : [$info, static::ContentType];
+			$this->addBlock($nm, $contentType, [$this->$method(...)]);
+		}
+	}
+
+
+	protected function leaveDefineLayer(): void
+	{
+		$this->blocks[self::LayerTop] = array_pop($this->blockStack) ?? [];
+	}
+
 	protected function leaveBlockLayer(): void
 	{
 		$this->blocks[self::LayerTop] = array_pop($this->blockStack) ?? [];

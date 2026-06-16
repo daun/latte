@@ -31,6 +31,8 @@ class DefineNode extends StatementNode
 {
 	public Block $block;
 	public AreaNode $content;
+	public int $bodyLayer;
+	public bool $hasBlocks = false;
 
 
 	/** @return \Generator<int, ?list<string>, array{AreaNode, ?Tag}, static> */
@@ -51,7 +53,15 @@ class DefineNode extends StatementNode
 			$node->block->parameters = self::parseParameters($tag);
 		}
 
+		// the body gets its own block layer so that blocks of sibling {define}s don't collide;
+		$prevLayer = $parser->blockLayer;
+		$parser->blockLayer = $node->bodyLayer = count($parser->blocks);
+		$parser->blocks[$parser->blockLayer] = [];
+		$parser->defineLayerParent[$node->bodyLayer] = $prevLayer;
 		[$node->content, $endTag] = yield;
+		$node->hasBlocks = (bool) $parser->blocks[$node->bodyLayer];
+		$parser->blockLayer = $prevLayer;
+
 		if ($endTag && $name instanceof Scalar\StringNode) {
 			$endTag->parser->stream->tryConsume($name->value);
 		}
@@ -103,15 +113,39 @@ class DefineNode extends StatementNode
 	private function printStatic(PrintContext $context): string
 	{
 		$context->addBlock($this->block);
-		$this->block->content = $this->content->print($context); // must be compiled after is added
+		$this->block->content = $this->wrapInDefineLayer($context, $this->content->print($context)); // must be compiled after is added
 		return '';
+	}
+
+
+	/**
+	 * Wraps the body in the define's own block layer (enter/leaveDefineLayer): an {embed} targeting
+	 * this define overrides its blocks, the define's same-named blocks act as fallbacks, and the
+	 * private layer lets sibling {define}s reuse the same block names without colliding.
+	 */
+	private function wrapInDefineLayer(PrintContext $context, string $inner): string
+	{
+		return $this->hasBlocks
+			? $context->format(
+				<<<'XX'
+					$this->enterDefineLayer(%dump);
+					try {
+					%raw
+					} finally {
+						$this->leaveDefineLayer();
+					}
+					XX,
+				$this->bodyLayer,
+				$inner,
+			)
+			: $inner;
 	}
 
 
 	private function printDynamic(PrintContext $context): string
 	{
 		$context->addBlock($this->block);
-		$this->block->content = $this->content->print($context); // must be compiled after is added
+		$this->block->content = $this->wrapInDefineLayer($context, $this->content->print($context)); // must be compiled after is added
 
 		return $context->format(
 			'$this->addBlock(%raw, %dump, [$this->%raw(...)], %dump);',
