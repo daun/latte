@@ -5,7 +5,8 @@ final class Template%a% extends Latte\Runtime\Template
 	public const Blocks = [
 		1 => ['a' => 'blockA'],
 		2 => ['a' => 'blockA1'],
-		0 => ['embed1' => 'blockEmbed1', 'a' => 'blockA2'],
+		0 => ['embed1' => 'blockEmbed1'],
+		3 => ['a' => 'blockA2'],
 	];
 
 
@@ -57,12 +58,18 @@ final class Template%a% extends Latte\Runtime\Template
 		extract($ʟ_args);
 		unset($ʟ_args);
 
-		echo '		embed1-start
+		$this->enterDefineLayer(3);
+		try {
+			echo '		embed1-start
 			';
-		$this->renderBlock('a', get_defined_vars()) /* pos 12:4 */;
-		echo '
+			$this->renderBlock('a', get_defined_vars()) /* pos 12:4 */;
+			echo '
 		embed1-end
 ';
+
+		} finally {
+			$this->leaveDefineLayer();
+		}
 	}
 
 
