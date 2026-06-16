@@ -368,8 +368,94 @@ testTemplate(
 				embed1-start
 					embed1-A
 				embed1-end
+
 				embed2-start
 					embed2-A
+				embed2-end
+
+		XX,
+);
+
+
+// sibling {define}s reusing the same block name keep independent parents:
+// each {include parent} resolves to its own define's block, not the other's
+testTemplate(
+	'parallel embeds with {include parent}',
+	[
+		'main' => <<<'XX'
+
+					{embed embed1}
+						{block a}embed1-A {include parent}{/block}
+					{/embed}
+
+					{embed embed2}
+						{block a}embed2-A {include parent}{/block}
+					{/embed}
+
+					{define embed1}
+					embed1-start
+						{block a}embed1-default{/block}
+					embed1-end
+					{/define}
+
+					{define embed2}
+					embed2-start
+						{block a}embed2-default{/block}
+					embed2-end
+					{/define}
+
+			XX,
+	],
+	<<<'XX'
+
+
+				embed1-start
+					embed1-A embed1-default
+				embed1-end
+
+				embed2-start
+					embed2-A embed2-default
+				embed2-end
+
+		XX,
+);
+
+
+// one sibling embed is overridden, the other falls back to its own block
+testTemplate(
+	'parallel embeds with mixed override and fallback',
+	[
+		'main' => <<<'XX'
+
+					{embed embed1}
+						{block a}embed1-A{/block}
+					{/embed}
+
+					{embed embed2}{/embed}
+
+					{define embed1}
+					embed1-start
+						{block a}embed1-default{/block}
+					embed1-end
+					{/define}
+
+					{define embed2}
+					embed2-start
+						{block a}embed2-default{/block}
+					embed2-end
+					{/define}
+
+			XX,
+	],
+	<<<'XX'
+
+
+				embed1-start
+					embed1-A
+				embed1-end
+
+				embed2-start
+					embed2-default
 				embed2-end
 
 		XX,
