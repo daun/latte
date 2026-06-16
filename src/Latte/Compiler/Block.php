@@ -19,6 +19,8 @@ final class Block
 	public string $content;
 	public string $escaping;
 
+	public bool $embedded = false;
+
 	/** @var ParameterNode[] */
 	public array $parameters = [];
 

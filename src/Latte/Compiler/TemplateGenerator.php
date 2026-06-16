@@ -114,8 +114,7 @@ final class TemplateGenerator
 
 			$body = $this->buildParams($block->content, $block->parameters, '$ʟ_args', $context);
 			if (!$block->isDynamic() && str_contains($body, '$')) {
-				$embedded = $block->tag->name === 'block' && is_int($block->layer) && $block->layer;
-				$body = 'extract(' . ($embedded ? 'end($this->varStack)' : '$this->params') . ');' . $body;
+				$body = 'extract(' . ($block->embedded ? 'end($this->varStack)' : '$this->params') . ');' . $body;
 			}
 
 			$this->addMethod(

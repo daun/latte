@@ -60,6 +60,10 @@ class EmbedNode extends StatementNode
 			}
 		}
 
+		foreach ($parser->blocks[$node->layer] as $block) {
+			$block->embedded = true;
+		}
+
 		$parser->blockLayer = $prevIndex;
 		return $node;
 	}
