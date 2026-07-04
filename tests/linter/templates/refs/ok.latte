@@ -1,0 +1,14 @@
+{include 'inc.latte'}
+{import 'imports.latte'}
+{embed 'inc.latte'}{/embed}
+{sandbox 'inc.latte'}
+{include foo from 'imports.latte'}
+{include footer from 'layout.latte'}
+{include content from 'layout.latte'}
+{include ploc from 'layout.latte'}
+{include ablk from 'auto.latte'}
+{include whatever from 'dynamic.latte'}
+{include cc from 'cycle1.latte'}
+{include $dyn}
+{include foo from $dyn}
+{include localOnly}

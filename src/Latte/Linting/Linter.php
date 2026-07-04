@@ -124,7 +124,7 @@ class Linter
 		if ($this->resolvedChecks === null) {
 			$engine = $this->getEngine();
 			$this->resolvedChecks = array_merge(
-				[new SymbolCheck($engine)],
+				[new SymbolCheck($engine), new TemplateReferenceCheck($engine)],
 				$this->checks,
 			);
 		}
