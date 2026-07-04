@@ -5,7 +5,7 @@
  * Copyright (c) 2008 David Grudl (https://davidgrudl.com)
  */
 
-namespace Latte\Tools;
+namespace Latte\Linting;
 
 use Latte;
 use Nette;
@@ -16,7 +16,7 @@ use const DIRECTORY_SEPARATOR, PHP_BINARY, STDERR;
 /**
  * Validates Latte template syntax.
  */
-final class Linter
+class Linter
 {
 	/** @var string[] */
 	public array $excludedDirs = ['.*', '*.tmp', 'temp', 'vendor', 'node_modules'];

@@ -114,10 +114,10 @@ parameters:
 
 		-	# Linter: dynamic loading of Nette bridge extensions
 			identifier: class.notFound
-			path: src/Tools/Linter.php
+			path: src/Latte/Linting/Linter.php
 		-
 			message: '#expects Latte\\Extension, Nette\\#'
-			path: src/Tools/Linter.php
+			path: src/Latte/Linting/Linter.php
 
 		-	# Blueprint: nullable type from reflection
 			message: '#expects string, string\|null given#'

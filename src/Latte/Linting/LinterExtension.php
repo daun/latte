@@ -5,7 +5,7 @@
  * Copyright (c) 2008 David Grudl (https://davidgrudl.com)
  */
 
-namespace Latte\Tools;
+namespace Latte\Linting;
 
 use Latte;
 use Latte\Compiler\Node;
@@ -19,7 +19,7 @@ use function defined;
 /**
  * Linter extension for validating filters, functions, classes, methods, constants and more.
  */
-final class LinterExtension extends Latte\Extension
+class LinterExtension extends Latte\Extension
 {
 	private ?Latte\Engine $engine = null;
 
